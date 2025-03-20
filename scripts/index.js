@@ -9,7 +9,7 @@ const placesList = content.querySelector('.places__list');
 
 // @todo: Функция создания карточки
 
-function addCard(initialCards, deletion) {
+function createCard(initialCards, deleteCard) {
     const cardElement = cardsTemplate.querySelector('.card').cloneNode(true);
     const deleteButton = cardElement.querySelector('.card__delete-button');
   
@@ -21,22 +21,20 @@ function addCard(initialCards, deletion) {
     cardImage.alt = initialCards.name;
 
     deleteButton.addEventListener('click', function () {
-        deletion(deleteButton);
+        deleteCard(cardElement);
     });
 
     return cardElement;
 }
 // @todo: Функция удаления карточки
 
-function deletion(deleteButton) {
-    const cardToRemove = deleteButton.closest('.card');
-
-    cardToRemove.remove();
-}
+function deleteCard(cardElement) {  
+    cardElement.remove();
+ }
 // @todo: Вывести карточки на страницу
 
 initialCards.forEach(function(cardElement) {
-    const createdCard = addCard(cardElement, deletion);
+    const createdCard = createCard(cardElement, deleteCard);
 
     placesList.append(createdCard);
 });
