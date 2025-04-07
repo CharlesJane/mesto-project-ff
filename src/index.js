@@ -10,6 +10,14 @@ const cardsTemplate = document.querySelector('#card-template').content;
 const content = document.querySelector('.content');
 const placesList = content.querySelector('.places__list');
 
+const profileImage = content.querySelector('.profile__image');
+const profileEditBtn = content.querySelector('.profile__edit-button');
+const profileAddBtn = content.querySelector('.profile__add-button');
+
+const popupEdit = document.querySelector('.popup_type_edit');
+const popupNewCard = document.querySelector('.popup_type_new-card');
+const popupImage = document.querySelector('.popup_type_image');
+
 // @todo: Функция создания карточки
 
 function createCard(initialCards, deleteCard) {
@@ -42,11 +50,25 @@ initialCards.forEach(function(cardElement) {
     placesList.append(createdCard);
 });
 
-function multiply(a, b) {
-    console.log(mult);
-    mult = a * b;
-    console.log(mult);
-    return mult;
+// Работа модальных окон
+
+
+function openModal(item, popup, closeModal) {
+    const closeBtn = popup.querySelector('.popup__close');
+
+    item.addEventListener('click', function() {
+        popup.classList.add('popup_is-opened');
+    });
+
+    closeBtn.addEventListener('click', function () {
+        closeModal(popup);
+    });
 }
 
-multiply(4, 3);
+function closeModal(popup) {
+    popup.classList.remove('popup_is-opened');
+}
+
+openModal(profileImage, popupImage, closeModal);
+openModal(profileEditBtn, popupEdit, closeModal);
+openModal(profileAddBtn, popupNewCard, closeModal);
