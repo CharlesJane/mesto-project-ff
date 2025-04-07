@@ -1,3 +1,6 @@
+import './pages/index.css'; // импорт главного файла стилей
+import { initialCards } from './cards.js';
+
 // @todo: Темплейт карточки
 
 const cardsTemplate = document.querySelector('#card-template').content;
@@ -38,3 +41,12 @@ initialCards.forEach(function(cardElement) {
 
     placesList.append(createdCard);
 });
+
+function multiply(a, b) {
+    console.log(mult);
+    mult = a * b;
+    console.log(mult);
+    return mult;
+}
+
+multiply(4, 3);
