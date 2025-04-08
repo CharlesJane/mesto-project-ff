@@ -1,10 +1,9 @@
-import { initialCards } from '../cards.js';
 import { cardsTemplate, popupImageTemplate } from '../index.js';
 import { openModal, closeModal } from '../components/modal.js';
 
 // @todo: Функция создания карточки
 
-export function createCard(initialCards, deleteCard, pressLike, imagePopup) {
+function createCard(initialCards, deleteCard, pressLike, compileImagePopup) {
     const cardElement = cardsTemplate.querySelector('.card').cloneNode(true);
     const deleteButton = cardElement.querySelector('.card__delete-button');
   
@@ -26,7 +25,7 @@ export function createCard(initialCards, deleteCard, pressLike, imagePopup) {
 
     cardImage.addEventListener('click', function () {
         openModal(cardImage, popupImageTemplate, closeModal);
-        imagePopup(initialCards);
+        compileImagePopup(initialCards);
     })
 
     return cardElement;
@@ -34,12 +33,16 @@ export function createCard(initialCards, deleteCard, pressLike, imagePopup) {
 
 // @todo: Функция удаления карточки
 
-export function deleteCard(cardElement) {  
+function deleteCard(cardElement) {  
     cardElement.remove();
 }
 
  //Ставим и снимаем лайк
 
-export function pressLike(likeButton) {
+function pressLike(likeButton) {
     likeButton.classList.toggle('card__like-button_is-active');
 }
+
+// export 
+
+export { createCard, deleteCard, pressLike};

@@ -5,7 +5,7 @@ import { createCard, deleteCard, pressLike } from './components/card.js';
 
 // @todo: Темплейт карточки
 
-export const cardsTemplate = document.querySelector('#card-template').content;
+const cardsTemplate = document.querySelector('#card-template').content;
 
 // @todo: DOM узлы
 
@@ -17,12 +17,12 @@ const profileAddBtn = content.querySelector('.profile__add-button');
 
 const popupEdit = document.querySelector('.popup_type_edit');
 const popupNewCard = document.querySelector('.popup_type_new-card');
-export const popupImageTemplate = document.querySelector('.popup_type_image');
+const popupImageTemplate = document.querySelector('.popup_type_image');
 
 // @todo: Вывести карточки на страницу - код, который отвечает за отображение шести карточек при открытии страницы
 
 initialCards.forEach(function(cardElement) {
-    const createdCard = createCard(cardElement, deleteCard, pressLike, imagePopup);
+    const createdCard = createCard(cardElement, deleteCard, pressLike, compileImagePopup);
 
     placesList.append(createdCard);
 });
@@ -65,14 +65,16 @@ function addNewCard(evt) {
     const placeName = placeNameInput.value;
     const placeLink = placeImageInput.value;
 
-    const createdCard = createCard(newData, deleteCard);
-
     const newData = {
         name: placeName,
         link: placeLink
     };
 
     initialCards.unshift(newData);
+
+    console.log(newData);
+
+    const createdCard = createCard(newData, deleteCard, pressLike, compileImagePopup);
     placesList.prepend(createdCard);
     
     placeNameInput.value = '';
@@ -88,7 +90,7 @@ formPlaceElement.addEventListener('submit', function(evt) {
 
 //функция добавления картинки и подписи в попап - функция открытия модального окна изображения карточки
 
-function imagePopup(initialCards) {
+function compileImagePopup(initialCards) {
     const popupImage = popupImageTemplate.querySelector('.popup__image');
     const popupCaption = popupImageTemplate.querySelector('.popup__caption');
 
@@ -100,3 +102,7 @@ function imagePopup(initialCards) {
 
 openModal(profileEditBtn, popupEdit, closeModal);
 openModal(profileAddBtn, popupNewCard, closeModal);
+
+// export 
+
+export { popupImageTemplate, compileImagePopup, cardsTemplate};

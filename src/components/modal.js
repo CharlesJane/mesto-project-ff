@@ -1,7 +1,7 @@
 // Работа модальных окон
 
 // Открытие модального окна
-export function openModal(item, popup, closeModal) {
+function openModal(item, popup, closeModal) {
     const closeBtn = popup.querySelector('.popup__close');
     const popupContent = popup.querySelector('.popup__content');
 
@@ -28,16 +28,21 @@ export function openModal(item, popup, closeModal) {
 }
 
 // Закрытие модального окна по кнопке
-export function closeModal(popup) {
+function closeModal(popup) {
     popup.classList.remove('popup_is-opened');
+    
     document.removeEventListener('keydown', closeByEscape); //удаляем слушатель, чтобы не отрабатывал вне модалки
 }
 
 // закрытие модалки по эскейп 
-export function closeByEscape(evt) {
+function closeByEscape(evt) {
     const popup = document.querySelector('.popup_is-opened');
 
     if (evt.key === 'Escape') {
         closeModal(popup);
     } 
 }
+
+// export 
+
+export { openModal, closeModal, closeByEscape};
