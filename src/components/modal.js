@@ -1,34 +1,24 @@
 // Работа модальных окон
-
 // Открытие модального окна
-function openModal(item, popup, closeModal) {
-    const closeBtn = popup.querySelector('.popup__close');
-    const popupContent = popup.querySelector('.popup__content');
+function openModal(aimedElement, popup) {
 
     popup.classList.add('popup_is-animated'); // добавляем класс для плавной анимации открытия/закрытия
 
-    item.addEventListener('click', function() {
-        popup.classList.add('popup_is-opened'); //открываем модалку
-        popup.classList.add('popup_is-animated');
+    aimedElement.addEventListener('click', function() {
+        popup.classList.add('popup_is-opened');
 
         document.addEventListener('keydown', closeByEscape); //вешаем слушатель только после открытия модалки, чтобы эскейп не срабатывал впустую на странице
-    });
-
-    closeBtn.addEventListener('click', function () {
-        closeModal(popup); // закрываем модалку по кнопке
-    });
-
-    popup.addEventListener('click', function(evt) {
-        closeModal(popup); //слушатель клика и закрытие по лэйауту модалки
-    });
-
-    popupContent.addEventListener('click', function(evt) {
-        evt.stopPropagation(); // исключение срабатывания пред. слушателя на самом окне модалки
+        popup.addEventListener('click', closeByLayout);
     });
 }
 
+function closeByLayout(popup) {
+    closeModal(popup); //слушатель клика и закрытие по лэйауту модалки
+};
+
 // Закрытие модального окна по кнопке
 function closeModal(popup) {
+    console.log(popup);
     popup.classList.remove('popup_is-opened');
     
     document.removeEventListener('keydown', closeByEscape); //удаляем слушатель, чтобы не отрабатывал вне модалки
@@ -36,9 +26,9 @@ function closeModal(popup) {
 
 // закрытие модалки по эскейп 
 function closeByEscape(evt) {
-    const popup = document.querySelector('.popup_is-opened');
-
     if (evt.key === 'Escape') {
+        const popup = document.querySelector('.popup_is-opened');
+        
         closeModal(popup);
     } 
 }

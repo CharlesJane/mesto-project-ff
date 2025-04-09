@@ -1,15 +1,15 @@
-import { cardsTemplate, popupImageTemplate } from '../index.js';
-import { openModal, closeModal } from '../components/modal.js';
-
 // @todo: Функция создания карточки
+// @todo: Темплейт карточки
+
+const cardsTemplate = document.querySelector('#card-template').content;
+const cardElement = cardsTemplate.querySelector('.card').cloneNode(true);
+const deleteButton = cardElement.querySelector('.card__delete-button');
+  
+const cardImage = cardElement.querySelector('.card__image');
+const cardTitle = cardElement.querySelector('.card__title');
+const likeButton = cardElement.querySelector('.card__like-button');
 
 function createCard(initialCards, deleteCard, pressLike, compileImagePopup) {
-    const cardElement = cardsTemplate.querySelector('.card').cloneNode(true);
-    const deleteButton = cardElement.querySelector('.card__delete-button');
-  
-    const cardImage = cardElement.querySelector('.card__image');
-    const cardTitle = cardElement.querySelector('.card__title');
-    const likeButton = cardElement.querySelector('.card__like-button');
 
     cardTitle.textContent = initialCards.name;
     cardImage.src = initialCards.link;
@@ -24,7 +24,6 @@ function createCard(initialCards, deleteCard, pressLike, compileImagePopup) {
     });
 
     cardImage.addEventListener('click', function () {
-        openModal(cardImage, popupImageTemplate, closeModal);
         compileImagePopup(initialCards);
     })
 
@@ -45,4 +44,4 @@ function pressLike(likeButton) {
 
 // export 
 
-export { createCard, deleteCard, pressLike};
+export { createCard, deleteCard, pressLike, cardsTemplate, cardImage};
