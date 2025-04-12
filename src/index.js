@@ -53,8 +53,12 @@ popupArray.forEach(function (popup) {
 
   popup.classList.add("popup_is-animated");
 
-  eachCloseButton.addEventListener("click", handleCloseModal);
-  popup.addEventListener("mousedown", handleCloseModal);
+  eachCloseButton.addEventListener("click", () => closeModal(popup)); 
+  popup.addEventListener("mousedown", (evt) => {
+    if (evt.target === popup) {
+     closeModal(popup);
+   }
+ }); 
 });
 
 // Редактирование имени и рода занятий - функция-обработчик открытия модального окна для редактирования профиля
@@ -117,23 +121,4 @@ function createImagePopup(linkValue, nameValue) {
   popupCaption.textContent = nameValue;
 
   openModal(popupImageTemplate);
-}
-
-// Функция закрытия попапов
-
-function handleCloseModal(evt) {
-  const popupOpened = evt.target.closest(".popup_is-opened");
-  const closeButton = evt.target.closest(".popup__close");
-  const popupContent = evt.target.closest(".popup__content");
-
-  if (closeButton) {
-    closeModal(popupOpened);
-  }
-
-  if (popupOpened) {
-    if (!popupContent) {
-      closeModal(popupOpened);
-    }
-    evt.stopPropagation();
-  }
 }
