@@ -1,11 +1,9 @@
-import "./pages/index.css"; // импорт главного файла стилей
+import "./pages/index.css";
 import { initialCards } from "./cards.js";
 import { openModal, closeModal } from "./components/modal.js";
 import { createCard, pressLike, deleteCard } from "./components/card.js";
 
-// @todo: Темплейт карточки
-
-// @todo: DOM узлы
+// DOM узлы
 
 const content = document.querySelector(".content");
 const placesList = content.querySelector(".places__list");
@@ -35,38 +33,40 @@ const popupCaption = popupImageTemplate.querySelector(".popup__caption");
 
 const popupArray = Array.from(document.querySelectorAll(".popup"));
 
-// @todo: Вывести карточки на страницу - код, который отвечает за отображение шести карточек при открытии страницы (работает)
+// Вывести карточки на страницу - код, который отвечает за отображение шести карточек при открытии страницы
 
 initialCards.forEach(function (cardElement) {
   const createdCard = createCard(
     cardElement,
     pressLike,
-    openImagePopup,
+    createImagePopup,
     deleteCard
   );
 
   placesList.append(createdCard);
 });
 
-// добавление анимации для попапов
+// Добавление анимации для попапов и слушателей на кнопку закрытия и оверлэй
 
 popupArray.forEach(function (popup) {
+  const eachCloseButton = popup.querySelector(".popup__close");
+
   popup.classList.add("popup_is-animated");
+
+  eachCloseButton.addEventListener("click", handleCloseModal);
+  popup.addEventListener("mousedown", handleCloseModal);
 });
 
-// Редактирование имени и рода занятий - функция-обработчик события открытия модального окна для редактирования профиля (работает)
+// Редактирование имени и рода занятий - функция-обработчик открытия модального окна для редактирования профиля
 
 function insertCurrentProfileValues() {
-  nameEditInput.value = content.querySelector(".profile__title").textContent;
-  jobEditInput.value = content.querySelector(
-    ".profile__description"
-  ).textContent;
+  nameEditInput.value = profileTitle.textContent;
+  jobEditInput.value = profileDescription.textContent;
 
   openModal(popupEditProfile);
 }
 
 function editProfileForm(evt) {
-  // Обработчик «отправки» формы
   evt.preventDefault();
 
   profileTitle.textContent = nameEditInput.value;
@@ -78,7 +78,7 @@ function editProfileForm(evt) {
 profileEditButton.addEventListener("click", insertCurrentProfileValues);
 formEditProfile.addEventListener("submit", editProfileForm);
 
-// Добавление новой карточки (работает)
+// Добавление новой карточки
 
 profileAddButton.addEventListener("click", function () {
   openModal(popupNewCard);
@@ -96,21 +96,20 @@ function addNewCard(evt) {
   const newCreatedCard = createCard(
     newCardsArray,
     pressLike,
-    openImagePopup,
+    createImagePopup,
     deleteCard
   );
 
   placesList.prepend(newCreatedCard);
 
-  newPlaceNameInput.value = "";
-  newPlaceImageInput.value = "";
+  formAddNewPlace.reset();
 
   closeModal(popupNewCard);
 }
 
 formAddNewPlace.addEventListener("submit", addNewCard);
 
-//функция добавления картинки и подписи в попап - функция открытия модального окна изображения карточки (работает)
+// Функция добавления картинки и подписи в попап - функция открытия модального окна изображения карточки
 
 function createImagePopup(linkValue, nameValue) {
   popupImage.src = linkValue;
@@ -120,19 +119,7 @@ function createImagePopup(linkValue, nameValue) {
   openModal(popupImageTemplate);
 }
 
-function openImagePopup(evt) {
-  const cardImageToOpen = evt.target.closest(".card__image");
-
-  if (cardImageToOpen) {
-    const linkValue = cardImageToOpen.src;
-    const nameValue = cardImageToOpen.alt;
-    createImagePopup(linkValue, nameValue);
-  }
-}
-
-placesList.addEventListener("click", openImagePopup);
-
-//функция закрытия попапов
+// Функция закрытия попапов
 
 function handleCloseModal(evt) {
   const popupOpened = evt.target.closest(".popup_is-opened");
@@ -150,5 +137,3 @@ function handleCloseModal(evt) {
     evt.stopPropagation();
   }
 }
-
-document.addEventListener("click", handleCloseModal);
