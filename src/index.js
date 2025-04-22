@@ -122,3 +122,29 @@ function createImagePopup(linkValue, nameValue) {
 
   openModal(popupImageTemplate);
 }
+
+// работа с формами на разгреб
+
+
+// Вынесем все необходимые элементы формы в константы
+const formElement = document.querySelector('.popup__form');
+const formInput = formElement.querySelector('.popup__input');
+
+function showInputError(someInput) { // показывает сообщение об ошибке, добавляя нужный класс
+  someInput.classList.add('popup__input_type_error');
+};
+
+function hideInputError(someInput) {
+  someInput.classList.remove('popup__input_type_error');
+};
+
+function isValid() {
+  if (!formInput.validity.valid) {
+    showInputError(formInput);
+  } else {
+    hideInputError(formInput);
+  }
+};
+
+// Слушатель события input и вызов функции проверки валидности формы
+formInput.addEventListener('input', isValid);
