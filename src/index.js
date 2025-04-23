@@ -163,15 +163,38 @@ function isValid(someForm, someInput) {
   }
 };
 
+function hasInvalidInput(inputList) {
+  return inputList.some((someInput) => {
+    return !someInput.validity.valid;
+  })
+};
+
+function toggleButtonState(inputList, someButton) {
+  if (hasInvalidInput(inputList)) {
+    someButton.disabled = true;
+
+    someButton.classList.add('popup__button_disabled');
+  } else {
+    someButton.disabled = false;
+
+    someButton.classList.remove('popup__button_disabled');
+  }
+};
+
 
 // Слушатель события input и вызов функции проверки валидности формы
 
 function setEventListeners(someForm) {
   const inputList = Array.from(someForm.querySelectorAll('.popup__input'));
+  const someButton = someForm.querySelector('.popup__button');
+  
+  toggleButtonState(inputList, someButton);
 
   inputList.forEach((someInput) => {
     someInput.addEventListener('input', function() {
       isValid(someForm, someInput);
+
+      toggleButtonState(inputList, someButton)
     });
   });
 };

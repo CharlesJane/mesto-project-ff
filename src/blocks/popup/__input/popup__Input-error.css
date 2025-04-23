@@ -10,6 +10,7 @@
     top: calc(100% + 5px);
     left: 0;
     transition: 0.3s;
+    z-index: 1;
 }
   
 .popup__input-error_active {
