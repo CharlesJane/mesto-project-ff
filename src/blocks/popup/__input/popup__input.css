@@ -14,9 +14,6 @@
   margin-bottom: 0;
 }
 
-.popup__input_type_error {
-  border-bottom: 1px solid #FF0000; /* красное подчеркивание для некорректных данных */
-}
 
 @media screen and (max-width: 568px) {
   .popup__title {

@@ -127,24 +127,61 @@ function createImagePopup(linkValue, nameValue) {
 
 
 // Вынесем все необходимые элементы формы в константы
-const formElement = document.querySelector('.popup__form');
-const formInput = formElement.querySelector('.popup__input');
+// const formElement = document.querySelector('.popup__form');
+// const formInput = formElement.querySelector('.popup__input');
+// const nameInput = formElement.querySelector('.popup__input_type_name');
+// const descriptionInput = formElement.querySelector('.popup__input_type_description');
+// const placeInput = formElement.querySelector('.popup__input_type_card-name');
+// const urlInput = formElement.querySelector('.popup__input_type_url');
 
-function showInputError(someInput) { // показывает сообщение об ошибке, добавляя нужный класс
+// const nameError = formElement.querySelector(`.${nameInput.id}-error`); 
+// const descriptionError = formElement.querySelector(`.${descriptionInput.id}-error`); 
+// const placeError = formElement.querySelector(`.${placeInput.id}-error`); 
+// const urlError = formElement.querySelector(`.${urlInput.id}-error`); 
+
+function showInputError(someForm, someInput, errorMessage) { // показывает сообщение об ошибке, добавляя нужный класс
+  const errorElement = someForm.querySelector(`.${someInput.id}-error`);
+
   someInput.classList.add('popup__input_type_error');
+  errorElement.textContent = errorMessage;
+  errorElement.classList.add('popup__input-error_active');
 };
 
-function hideInputError(someInput) {
+function hideInputError(someForm, someInput) {
+  const errorElement = someForm.querySelector(`.${someInput.id}-error`);
+
   someInput.classList.remove('popup__input_type_error');
+  errorElement.classList.remove('popup__input-error_active');
+  errorElement.textContent = '';
 };
 
-function isValid() {
-  if (!formInput.validity.valid) {
-    showInputError(formInput);
+function isValid(someForm, someInput) {
+  if (!someInput.validity.valid) {
+    showInputError(someForm, someInput, someInput.validationMessage);
   } else {
-    hideInputError(formInput);
+    hideInputError(someForm, someInput);
   }
 };
 
+
 // Слушатель события input и вызов функции проверки валидности формы
-formInput.addEventListener('input', isValid);
+
+function setEventListeners(someForm) {
+  const inputList = Array.from(someForm.querySelectorAll('.popup__input'));
+
+  inputList.forEach((someInput) => {
+    someInput.addEventListener('input', function() {
+      isValid(someForm, someInput);
+    });
+  });
+};
+
+function enableValidation() {
+  const formList = Array.from(document.querySelectorAll('.popup__form'));
+
+  formList.forEach((someForm) => {
+    setEventListeners(someForm);
+  });
+};
+
+enableValidation();

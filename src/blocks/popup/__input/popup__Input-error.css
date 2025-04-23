@@ -1,0 +1,17 @@
+.popup__input_type_error {
+    border-bottom: 1px solid #FF0000; /* красное подчеркивание для некорректных данных */
+}
+  
+.popup__input-error {
+    font-size: 12px;
+    color: #FF0000;
+    opacity: 0;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    transition: 0.3s;
+}
+  
+.popup__input-error_active {
+    opacity: 1;
+}
