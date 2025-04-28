@@ -14,8 +14,10 @@ const formAddNewPlace = document.querySelector('[name="new-place"]');
 
 const profileEditButton = content.querySelector(".profile__edit-button");
 const profileAddButton = content.querySelector(".profile__add-button");
+
 const profileTitle = content.querySelector(".profile__title");
 const profileDescription = content.querySelector(".profile__description");
+const profileImage = content.querySelector('.profile__image');
 
 const popupEditProfile = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
@@ -43,18 +45,57 @@ const configData = {
   errorClass: "popup__input-error_active",
 };
 
+// Подстановка данных профиля
+
+fetch('https://nomoreparties.co/v1/wff-cohort-37/users/me', {
+  method: 'GET',
+  headers: {
+    authorization: 'e5986798-633d-43df-97ea-3579551b9329'
+  }
+})
+  .then((res) => {
+    return res.json();
+  })
+  .then((result) => {
+    profileTitle.textContent = result.name;
+    profileDescription.textContent = result.about;
+    profileImage.style.backgroundImage = `url(${result.avatar})`;
+  })
+  .catch((err) => {
+    console.log('Произошла ошибка', err);
+  });
+
+
 // Вывести карточки на страницу - код, который отвечает за отображение шести карточек при открытии страницы
 
-initialCards.forEach(function (cardElement) {
-  const createdCard = createCard(
-    cardElement,
-    pressLike,
-    createImagePopup,
-    deleteCard
-  );
+fetch('https://nomoreparties.co/v1/wff-cohort-37/cards', {
+  method: 'GET',
+  headers: {
+    authorization: 'e5986798-633d-43df-97ea-3579551b9329'
+  }
+})
+  .then((res) => {
+    return res.json();
+  })
+  .then((data) => {
+    const cardsArray = data;
+    return cardsArray;
+  })
+  .then((cardsArray) => {
+    cardsArray.forEach(function(card) {
+      const createdCard = createCard(
+        card,
+        pressLike,
+        createImagePopup,
+        deleteCard
+      );
 
-  placesList.append(createdCard);
-});
+      placesList.append(createdCard);
+    })
+  })
+  .catch((err) => {
+    console.log('Произошла ошибка', err);
+  });
 
 // Добавление анимации для попапов и слушателей на кнопку закрытия и оверлэй
 
@@ -136,4 +177,43 @@ function createImagePopup(linkValue, nameValue) {
   openModal(popupImageTemplate);
 }
 
+//Вызов валидации
+
 enableValidation(configData);
+
+// API
+
+// fetch('https://nomoreparties.co/v1/wff-cohort-37/users/me', {
+//   method: 'GET',
+//   headers: {
+//     authorization: 'e5986798-633d-43df-97ea-3579551b9329'
+//   }
+// })
+//   .then((res) => {
+//     return res.json();
+//   })
+//   .then((result) => {
+//     // console.log(result.name);
+//     // console.log(result);
+//   })
+//   .catch((err) => {
+//     console.log('Error', err);
+//   });
+
+  //cards
+
+// fetch('https://nomoreparties.co/v1/wff-cohort-37/cards', {
+//     method: 'GET',
+//     headers: {
+//       authorization: 'e5986798-633d-43df-97ea-3579551b9329'
+//     }
+// })
+//   .then((res) => {
+//     return res.json();
+//   })
+//   .then((result) => {
+//     console.log(result);
+//   })
+//   .catch((err) => {
+//     console.log('Error', err);
+//   });
