@@ -2,6 +2,7 @@ import "./pages/index.css";
 import { initialCards } from "./cards.js";
 import { openModal, closeModal } from "./components/modal.js";
 import { createCard, pressLike, deleteCard } from "./components/card.js";
+import { enableValidation, resetInputErrors, resetSubmitButton } from "./components/validation.js";
 
 // DOM узлы
 
@@ -32,6 +33,15 @@ const popupImage = popupImageTemplate.querySelector(".popup__image");
 const popupCaption = popupImageTemplate.querySelector(".popup__caption");
 
 const popupArray = Array.from(document.querySelectorAll(".popup"));
+
+const configData = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__input-error_active",
+};
 
 // Вывести карточки на страницу - код, который отвечает за отображение шести карточек при открытии страницы
 
@@ -66,6 +76,8 @@ popupArray.forEach(function (popup) {
 function insertCurrentProfileValues() {
   nameEditInput.value = profileTitle.textContent;
   jobEditInput.value = profileDescription.textContent;
+
+  resetInputErrors(formEditProfile, configData);
 
   openModal(popupEditProfile);
 }
@@ -107,6 +119,7 @@ function addNewCard(evt) {
   placesList.prepend(newCreatedCard);
 
   formAddNewPlace.reset();
+  resetInputErrors(formAddNewPlace, configData);
 
   closeModal(popupNewCard);
 }
@@ -123,88 +136,4 @@ function createImagePopup(linkValue, nameValue) {
   openModal(popupImageTemplate);
 }
 
-// работа с формами на разгреб
-
-
-// Вынесем все необходимые элементы формы в константы
-// const formElement = document.querySelector('.popup__form');
-// const formInput = formElement.querySelector('.popup__input');
-// const nameInput = formElement.querySelector('.popup__input_type_name');
-// const descriptionInput = formElement.querySelector('.popup__input_type_description');
-// const placeInput = formElement.querySelector('.popup__input_type_card-name');
-// const urlInput = formElement.querySelector('.popup__input_type_url');
-
-// const nameError = formElement.querySelector(`.${nameInput.id}-error`); 
-// const descriptionError = formElement.querySelector(`.${descriptionInput.id}-error`); 
-// const placeError = formElement.querySelector(`.${placeInput.id}-error`); 
-// const urlError = formElement.querySelector(`.${urlInput.id}-error`); 
-
-function showInputError(someForm, someInput, errorMessage) { // показывает сообщение об ошибке, добавляя нужный класс
-  const errorElement = someForm.querySelector(`.${someInput.id}-error`);
-
-  someInput.classList.add('popup__input_type_error');
-  errorElement.textContent = errorMessage;
-  errorElement.classList.add('popup__input-error_active');
-};
-
-function hideInputError(someForm, someInput) {
-  const errorElement = someForm.querySelector(`.${someInput.id}-error`);
-
-  someInput.classList.remove('popup__input_type_error');
-  errorElement.classList.remove('popup__input-error_active');
-  errorElement.textContent = '';
-};
-
-function isValid(someForm, someInput) {
-  if (!someInput.validity.valid) {
-    showInputError(someForm, someInput, someInput.validationMessage);
-  } else {
-    hideInputError(someForm, someInput);
-  }
-};
-
-function hasInvalidInput(inputList) {
-  return inputList.some((someInput) => {
-    return !someInput.validity.valid;
-  })
-};
-
-function toggleButtonState(inputList, someButton) {
-  if (hasInvalidInput(inputList)) {
-    someButton.disabled = true;
-
-    someButton.classList.add('popup__button_disabled');
-  } else {
-    someButton.disabled = false;
-
-    someButton.classList.remove('popup__button_disabled');
-  }
-};
-
-
-// Слушатель события input и вызов функции проверки валидности формы
-
-function setEventListeners(someForm) {
-  const inputList = Array.from(someForm.querySelectorAll('.popup__input'));
-  const someButton = someForm.querySelector('.popup__button');
-  
-  toggleButtonState(inputList, someButton);
-
-  inputList.forEach((someInput) => {
-    someInput.addEventListener('input', function() {
-      isValid(someForm, someInput);
-
-      toggleButtonState(inputList, someButton)
-    });
-  });
-};
-
-function enableValidation() {
-  const formList = Array.from(document.querySelectorAll('.popup__form'));
-
-  formList.forEach((someForm) => {
-    setEventListeners(someForm);
-  });
-};
-
-enableValidation();
+enableValidation(configData);
