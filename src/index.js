@@ -47,55 +47,100 @@ const configData = {
 
 // Подстановка данных профиля
 
-fetch('https://nomoreparties.co/v1/wff-cohort-37/users/me', {
+const profileDataPromise = fetch('https://nomoreparties.co/v1/wff-cohort-37/users/me', {
   method: 'GET',
   headers: {
     authorization: 'e5986798-633d-43df-97ea-3579551b9329'
   }
-})
-  .then((res) => {
-    return res.json();
+});
+
+const cardsArrayPromise = fetch('https://nomoreparties.co/v1/wff-cohort-37/cards', {
+  method: 'GET',
+  headers: {
+    authorization: 'e5986798-633d-43df-97ea-3579551b9329'
+  }
+});
+
+const promises = [profileDataPromise, cardsArrayPromise];
+
+Promise.all(promises)
+  .then(([userData, cardsArray]) => {
+    return Promise.all([
+      userData.json(),
+      cardsArray.json()
+    ]);
   })
-  .then((result) => {
-    profileTitle.textContent = result.name;
-    profileDescription.textContent = result.about;
-    profileImage.style.backgroundImage = `url(${result.avatar})`;
-  })
+  .then(([user, cards]) => {
+      profileTitle.textContent = user.name;
+      profileDescription.textContent = user.about;
+      profileImage.style.backgroundImage = `url(${user.avatar})`;
+
+      const cardsArray = cards;
+      
+      cardsArray.forEach(function(card) {
+        const createdCard = createCard(
+          card,
+          pressLike,
+          createImagePopup,
+          deleteCard
+        );
+  
+        placesList.append(createdCard);
+      })
+    })
   .catch((err) => {
-    console.log('Произошла ошибка', err);
-  });
+      console.log('Произошла ошибка', err);
+    });
 
 
+// const profileDataPromise = fetch('https://nomoreparties.co/v1/wff-cohort-37/users/me', {
+//   method: 'GET',
+//   headers: {
+//     authorization: 'e5986798-633d-43df-97ea-3579551b9329'
+//   }
+// })
+//   .then((res) => {
+//     return res.json();
+//   })
+//   .then((result) => {
+//     profileTitle.textContent = result.name;
+//     profileDescription.textContent = result.about;
+//     profileImage.style.backgroundImage = `url(${result.avatar})`;
+//   })
+//   .catch((err) => {
+//     console.log('Произошла ошибка', err);
+//   });
+  
 // Вывести карточки на страницу - код, который отвечает за отображение шести карточек при открытии страницы
 
-fetch('https://nomoreparties.co/v1/wff-cohort-37/cards', {
-  method: 'GET',
-  headers: {
-    authorization: 'e5986798-633d-43df-97ea-3579551b9329'
-  }
-})
-  .then((res) => {
-    return res.json();
-  })
-  .then((data) => {
-    const cardsArray = data;
-    return cardsArray;
-  })
-  .then((cardsArray) => {
-    cardsArray.forEach(function(card) {
-      const createdCard = createCard(
-        card,
-        pressLike,
-        createImagePopup,
-        deleteCard
-      );
+// fetch('https://nomoreparties.co/v1/wff-cohort-37/cards', {
+//   method: 'GET',
+//   headers: {
+//     authorization: 'e5986798-633d-43df-97ea-3579551b9329'
+//   }
+// })
+//   .then((res) => {
+//     return res.json();
+//   })
+//   .then((data) => {
+//     const cardsArray = data;
+//     return cardsArray;
+//   })
+//   .then((cardsArray) => {
+//     cardsArray.forEach(function(card) {
+//       const createdCard = createCard(
+//         card,
+//         pressLike,
+//         createImagePopup,
+//         deleteCard
+//       );
 
-      placesList.append(createdCard);
-    })
-  })
-  .catch((err) => {
-    console.log('Произошла ошибка', err);
-  });
+//       placesList.append(createdCard);
+//     })
+//   })
+//   .catch((err) => {
+//     console.log('Произошла ошибка', err);
+//   });
 
 // Добавление анимации для попапов и слушателей на кнопку закрытия и оверлэй
 
