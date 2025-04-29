@@ -1,8 +1,9 @@
 import "./pages/index.css";
 import { initialCards } from "./cards.js";
 import { openModal, closeModal } from "./components/modal.js";
-import { createCard, pressLike, deleteCard } from "./components/card.js";
-import { enableValidation, resetInputErrors, resetSubmitButton } from "./components/validation.js";
+import { createCard, pressLike } from "./components/card.js";
+import { enableValidation, resetInputErrors } from "./components/validation.js";
+import { getProfile, getCards, updateProfile, addCard, deleteCardFromServer, addLike, removeLike } from "./components/api.js";
 
 // DOM узлы
 
@@ -11,6 +12,7 @@ const placesList = content.querySelector(".places__list");
 
 const formEditProfile = document.querySelector('[name="edit-profile"]');
 const formAddNewPlace = document.querySelector('[name="new-place"]');
+const formDeletePlace = document.querySelector('[name="confirm-delete"]');
 
 const profileEditButton = content.querySelector(".profile__edit-button");
 const profileAddButton = content.querySelector(".profile__add-button");
@@ -22,6 +24,7 @@ const profileImage = content.querySelector('.profile__image');
 const popupEditProfile = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupImageTemplate = document.querySelector(".popup_type_image");
+const popupConfirmDelete = document.querySelector(".popup_type_delete");
 
 const newPlaceNameInput = formAddNewPlace.querySelector(
   'input[name="place-name"]'
@@ -45,23 +48,13 @@ const configData = {
   errorClass: "popup__input-error_active",
 };
 
-// Подстановка данных профиля
+// Подстановка данных профиля и отображение карточек
 
-const profileDataPromise = fetch('https://nomoreparties.co/v1/wff-cohort-37/users/me', {
-  method: 'GET',
-  headers: {
-    authorization: 'e5986798-633d-43df-97ea-3579551b9329'
-  }
-});
 
-const cardsArrayPromise = fetch('https://nomoreparties.co/v1/wff-cohort-37/cards', {
-  method: 'GET',
-  headers: {
-    authorization: 'e5986798-633d-43df-97ea-3579551b9329'
-  }
-});
+  // Создаем массив промисов для одновременной обработки
 
-const promises = [profileDataPromise, cardsArrayPromise];
+function loadData() {
+  const promises = [getProfile(), getCards()];
 
 Promise.all(promises)
   .then(([userData, cardsArray]) => {
@@ -70,77 +63,31 @@ Promise.all(promises)
       cardsArray.json()
     ]);
   })
-  .then(([user, cards]) => {
-      profileTitle.textContent = user.name;
-      profileDescription.textContent = user.about;
-      profileImage.style.backgroundImage = `url(${user.avatar})`;
+  .then(([userData, cardData]) => {
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileImage.style.backgroundImage = `url(${userData.avatar})`;
 
-      const cardsArray = cards;
-      
-      cardsArray.forEach(function(card) {
-        const createdCard = createCard(
-          card,
-          pressLike,
-          createImagePopup,
-          deleteCard
-        );
-  
-        placesList.append(createdCard);
-      })
+    cardData.forEach(function(card) {
+      const cardId = card._id;
+      const createdCard = createCard(
+        card,
+        pressLike,
+        createImagePopup,
+        handleDelete
+      );
+
+      createdCard.dataset.id = cardId;
+
+      placesList.append(createdCard);
     })
+  })
   .catch((err) => {
-      console.log('Произошла ошибка', err);
-    });
+    console.log('Ошибка', err);
+  });
+}
 
-
-// const profileDataPromise = fetch('https://nomoreparties.co/v1/wff-cohort-37/users/me', {
-//   method: 'GET',
-//   headers: {
-//     authorization: 'e5986798-633d-43df-97ea-3579551b9329'
-//   }
-// })
-//   .then((res) => {
-//     return res.json();
-//   })
-//   .then((result) => {
-//     profileTitle.textContent = result.name;
-//     profileDescription.textContent = result.about;
-//     profileImage.style.backgroundImage = `url(${result.avatar})`;
-//   })
-//   .catch((err) => {
-//     console.log('Произошла ошибка', err);
-//   });
-  
-// Вывести карточки на страницу - код, который отвечает за отображение шести карточек при открытии страницы
-
-// fetch('https://nomoreparties.co/v1/wff-cohort-37/cards', {
-//   method: 'GET',
-//   headers: {
-//     authorization: 'e5986798-633d-43df-97ea-3579551b9329'
-//   }
-// })
-//   .then((res) => {
-//     return res.json();
-//   })
-//   .then((data) => {
-//     const cardsArray = data;
-//     return cardsArray;
-//   })
-//   .then((cardsArray) => {
-//     cardsArray.forEach(function(card) {
-//       const createdCard = createCard(
-//         card,
-//         pressLike,
-//         createImagePopup,
-//         deleteCard
-//       );
-
-//       placesList.append(createdCard);
-//     })
-//   })
-//   .catch((err) => {
-//     console.log('Произошла ошибка', err);
-//   });
+loadData();
 
 // Добавление анимации для попапов и слушателей на кнопку закрытия и оверлэй
 
@@ -171,15 +118,63 @@ function insertCurrentProfileValues() {
 function editProfileForm(evt) {
   evt.preventDefault();
 
-  profileTitle.textContent = nameEditInput.value;
-  profileDescription.textContent = jobEditInput.value;
+  updateProfile(nameEditInput.value, jobEditInput.value)
+    .then(() => {
+      profileTitle.textContent = nameEditInput.value;
+      profileDescription.textContent = jobEditInput.value;
 
-  closeModal(popupEditProfile);
+      closeModal(popupEditProfile);
+    })
+    .catch((err) => {
+      console.log('Ошибка', err);
+    });
 }
 
 profileEditButton.addEventListener("click", insertCurrentProfileValues);
 formEditProfile.addEventListener("submit", editProfileForm);
 
+// Открываем попап для подтверждения удаления
+
+function handleDelete(cardId) {
+  const confirmButton = popupConfirmDelete.querySelector('.popup__button_confirm');
+
+  openModal(popupConfirmDelete);
+
+  confirmButton.addEventListener('click', function(evt) {
+    evt.preventDefault();
+    confirmDeliteCard(cardId);
+    closeModal(popupConfirmDelete);
+  });
+}
+
+// Функция удаления карточки
+
+function confirmDeliteCard(cardId) {
+  deleteCardFromServer(cardId)
+    .then(res => {
+      // Проверяем статус ответа
+      if (!res.ok) {
+        throw new Error('Ошибка сервера: ' + res.status);
+      }
+      return res.json();
+    })
+    .then(data => {
+      // Проверяем наличие сообщения об успешном удалении
+      if (data.message === 'Пост удалён') {
+        // Удаляем карточку из DOM
+        const cardElement = document.querySelector(`.card[data-id="${cardId}"]`);
+        cardElement.remove();
+      } else {
+        console.log('Ошибка удаления', data);
+      }
+    })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log('Ошибка', err);
+    })
+}
 // Добавление новой карточки
 
 profileAddButton.addEventListener("click", function () {
@@ -187,27 +182,30 @@ profileAddButton.addEventListener("click", function () {
 });
 
 function addNewCard(evt) {
-  evt.preventDefault();
+  evt.preventDefault()
 
-  const placeName = newPlaceNameInput.value;
-  const placeLink = newPlaceImageInput.value;
-  const newCardsArray = {
-    name: placeName,
-    link: placeLink,
-  };
-  const newCreatedCard = createCard(
-    newCardsArray,
-    pressLike,
-    createImagePopup,
-    deleteCard
-  );
+  addCard(newPlaceNameInput.value, newPlaceImageInput.value)
+    .then((res) => {
+      return res.json();
+    })
+    .then((data) => {
+      const newCreatedCard = createCard(
+        data,
+        pressLike,
+        createImagePopup,
+        handleDelete
+      );
 
-  placesList.prepend(newCreatedCard);
+      placesList.prepend(newCreatedCard);
 
-  formAddNewPlace.reset();
-  resetInputErrors(formAddNewPlace, configData);
+      formAddNewPlace.reset();
+      resetInputErrors(formAddNewPlace, configData);
 
-  closeModal(popupNewCard);
+      closeModal(popupNewCard);
+    })
+    .catch((err) => {
+      console.log('Ошибка', err);
+    })
 }
 
 formAddNewPlace.addEventListener("submit", addNewCard);
@@ -225,40 +223,3 @@ function createImagePopup(linkValue, nameValue) {
 //Вызов валидации
 
 enableValidation(configData);
-
-// API
-
-// fetch('https://nomoreparties.co/v1/wff-cohort-37/users/me', {
-//   method: 'GET',
-//   headers: {
-//     authorization: 'e5986798-633d-43df-97ea-3579551b9329'
-//   }
-// })
-//   .then((res) => {
-//     return res.json();
-//   })
-//   .then((result) => {
-//     // console.log(result.name);
-//     // console.log(result);
-//   })
-//   .catch((err) => {
-//     console.log('Error', err);
-//   });
-
-  //cards
-
-// fetch('https://nomoreparties.co/v1/wff-cohort-37/cards', {
-//     method: 'GET',
-//     headers: {
-//       authorization: 'e5986798-633d-43df-97ea-3579551b9329'
-//     }
-// })
-//   .then((res) => {
-//     return res.json();
-//   })
-//   .then((result) => {
-//     console.log(result);
-//   })
-//   .catch((err) => {
-//     console.log('Error', err);
-//   });

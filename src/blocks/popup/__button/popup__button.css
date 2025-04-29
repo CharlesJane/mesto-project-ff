@@ -20,6 +20,10 @@
   color: grey;
 }
 
+.popup__button_confirm {
+  margin-top: 0;
+}
+
 .popup__button:hover {
   background: rgba(0, 0, 0, 0.8);
   cursor: pointer;

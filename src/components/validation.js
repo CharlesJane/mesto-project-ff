@@ -57,7 +57,6 @@ export function resetInputErrors(someForm, settings) {
   // очищает ошибки при повторном открытии попапа
   const inputArray = Array.from(someForm.querySelectorAll(settings.inputSelector));
   const submitButton = someForm.querySelector(settings.submitButtonSelector);
-  console.log(settings.submitButtonSelector);
 
   inputArray.forEach(function (someInput) {
     hideInputError(someForm, someInput, settings);
