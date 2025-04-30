@@ -3,7 +3,7 @@ import { initialCards } from "./cards.js";
 import { openModal, closeModal } from "./components/modal.js";
 import { createCard } from "./components/card.js";
 import { enableValidation, resetInputErrors } from "./components/validation.js";
-import { getProfile, getCards, updateProfile, addCard, deleteCardFromServer, addLike, removeLike } from "./components/api.js";
+import { getProfile, getCards, updateProfile, updateAvatar, addCard, deleteCardFromServer, addLike, removeLike } from "./components/api.js";
 
 // DOM узлы
 
@@ -12,6 +12,7 @@ const placesList = content.querySelector(".places__list");
 
 const formEditProfile = document.querySelector('[name="edit-profile"]');
 const formAddNewPlace = document.querySelector('[name="new-place"]');
+const formEditAvatar = document.querySelector('[name="new-avatar"]');
 
 const profileEditButton = content.querySelector(".profile__edit-button");
 const profileAddButton = content.querySelector(".profile__add-button");
@@ -24,11 +25,13 @@ const popupEditProfile = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupImageTemplate = document.querySelector(".popup_type_image");
 const popupConfirmDelete = document.querySelector(".popup_type_delete");
+const popupEditAvatar = document.querySelector(".popup_type_avatar");
 
 const newPlaceNameInput = formAddNewPlace.querySelector(
   'input[name="place-name"]'
 );
-const newPlaceImageInput = formAddNewPlace.querySelector('input[name="link"]');
+const newPlaceImageInput = formAddNewPlace.querySelector('input[name="place-link"]');
+const avatarImageInput = formEditAvatar.querySelector('input[name="avatar-link"]');
 
 const nameEditInput = formEditProfile.querySelector('input[name="name"]');
 const jobEditInput = formEditProfile.querySelector('input[name="description"]');
@@ -128,14 +131,14 @@ function handleDelete(cardId) {
   openModal(popupConfirmDelete);
 
   confirmButton.addEventListener('click', function() {
-    confirmDeliteCard(cardId);
+    confirmDeleteCard(cardId);
     closeModal(popupConfirmDelete);
   });
 }
 
 // Функция удаления карточки
 
-function confirmDeliteCard(cardId) {
+function confirmDeleteCard(cardId) {
   deleteCardFromServer(cardId)
     .then(data => { // Удаляем карточку из DOM
       if (data.message === 'Пост удалён') {
@@ -192,6 +195,33 @@ function createImagePopup(linkValue, nameValue) {
 
   openModal(popupImageTemplate);
 }
+
+// Добавление нового аватара
+
+profileImage.addEventListener("click", function () {
+  openModal(popupEditAvatar);
+});
+
+function editAvatar(evt) {
+  evt.preventDefault()
+
+  const avatarUrl = avatarImageInput.value.trim();
+
+  updateAvatar(avatarUrl)
+    .then((profile) => {
+      profileImage.style.backgroundImage = `url(${avatarUrl})`;
+
+      formEditAvatar.reset();
+      resetInputErrors(formEditAvatar, configData);
+
+      closeModal(popupEditAvatar);
+    })
+    .catch((err) => {
+      console.log('Ошибка обновления аватара', err);
+    })
+}
+
+formEditAvatar.addEventListener("submit", editAvatar);
 
 //Вызов валидации
 

@@ -45,6 +45,21 @@ const updateProfile = (name, about) => {
     .then(handleResponse);
 };
 
+// Обновление аватарки
+const updateAvatar = (avatarUrl) => {
+    return  fetch(`${SERVER_URL}/users/me/avatar`, {
+        method: 'PATCH',
+        headers: {
+            authorization: TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            avatar: avatarUrl
+        })
+    })
+    .then(handleResponse);
+}
+
 // Добавление новой карточки
 const addCard = (name, link) => {
     return fetch(`${SERVER_URL}/cards`, {
@@ -91,4 +106,4 @@ const removeLike = (cardId) => {
     .then(handleResponse);
 };
 
-export { getProfile, getCards, updateProfile, addCard, deleteCardFromServer, addLike, removeLike };
+export { getProfile, getCards, updateProfile, updateAvatar, addCard, deleteCardFromServer, addLike, removeLike };

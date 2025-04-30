@@ -44,7 +44,6 @@ function createCard(cardData, handleLikes, createImagePopup, handleDelete) {
 
 function checkIsLiked(cardData, likeButton) {
   if (cardData.likes.some(like => like._id === "c09a3d58b3afc37c1ef34a79")) {
-    console.log(likeButton.classList);
     likeButton.classList.add('card__like-button_is-active');
   }
 };

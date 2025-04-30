@@ -14,7 +14,7 @@
   </header>
   <main class="content">
     <section class="profile page__section">
-      <div class="profile__image" ></div>
+      <div class="profile__image"></div>
       <div class="profile__info">
         <h1 class="profile__title"></h1>
         <button class="profile__edit-button" type="button"></button>
@@ -94,7 +94,7 @@
         <label class="popup__label">
           <input 
             type="url" 
-            name="link" 
+            name="place-link" 
             id="url-input" 
             class="popup__input popup__input_type_url" 
             placeholder="Ссылка на картинку" 
@@ -119,6 +119,26 @@
       <button type="button" class="popup__close"></button>
       <h3 class="popup__title">Вы уверены?</h3>
       <button type="submit" class="button popup__button popup__button_confirm">Да</button>
+    </div>
+  </div>
+  <div class="popup popup_type_avatar">
+    <div class="popup__content popup__content_content_avatar">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Обновить аватар</h3>
+      <form class="popup__form" name="new-avatar" novalidate>
+        <label class="popup__label">
+          <input 
+            type="url" 
+            name="avatar-link"
+            id="avatar-input" 
+            class="popup__input popup__input_type_url" 
+            placeholder="Ссылка на аватар" 
+            required
+          >
+          <span class="popup__input-error avatar-input-error"></span>
+        </label>
+        <button type="submit" class="button popup__button">Сохранить</button>
+      </form>
     </div>
   </div>
 </div>
