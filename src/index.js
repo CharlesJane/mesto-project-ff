@@ -108,14 +108,22 @@ function insertCurrentProfileValues() {
 function editProfileForm(evt) {
   evt.preventDefault();
 
+  const editSubmitButton = formEditProfile.querySelector('.popup__button');
+  const originalEditSubmitText = editSubmitButton.textContent;
+
+  editSubmitButton.textContent = "Сохранение...";
+  
   updateProfile(nameEditInput.value, jobEditInput.value)
     .then(() => {
       profileTitle.textContent = nameEditInput.value;
       profileDescription.textContent = jobEditInput.value;
 
+      editSubmitButton.textContent = originalEditSubmitText;
+
       closeModal(popupEditProfile);
     })
     .catch((err) => {
+      editSubmitButton.textContent = "Ошибка сохранения";
       console.log('Ошибка', err);
     });
 }
@@ -132,20 +140,27 @@ function handleDelete(cardId) {
 
   confirmButton.addEventListener('click', function() {
     confirmDeleteCard(cardId);
-    closeModal(popupConfirmDelete);
   });
 }
 
 // Функция удаления карточки
 
 function confirmDeleteCard(cardId) {
+  const deleteButton = popupConfirmDelete.querySelector('.popup__button_confirm');
+  const originalDeleteButtonText = deleteButton.textContent;
+
+  deleteButton.textContent = "Удаление...";
+
   deleteCardFromServer(cardId)
     .then(data => { // Удаляем карточку из DOM
       if (data.message === 'Пост удалён') {
         const cardElement = document.querySelector(`.card[data-id="${cardId}"]`);
 
         cardElement.remove();
+        deleteButton.textContent = originalDeleteButtonText;
+        closeModal(popupConfirmDelete);
       } else {
+        deleteButton.textContent = "Ошибка удаления";
         console.log('Ошибка удаления', data);
       }
     })
@@ -163,6 +178,11 @@ profileAddButton.addEventListener("click", function () {
 function addNewCard(evt) {
   evt.preventDefault()
 
+  const addNewCardButton = popupNewCard.querySelector(".popup__button");
+  const originalAddButtonText = addNewCardButton.textContent;
+
+  addNewCardButton.textContent = "Добавление карточки...";
+
   addCard(newPlaceNameInput.value, newPlaceImageInput.value)
     .then((data) => {
       const newCreatedCard = createCard(
@@ -176,10 +196,12 @@ function addNewCard(evt) {
 
       formAddNewPlace.reset();
       resetInputErrors(formAddNewPlace, configData);
+      addNewCardButton.textContent = originalAddButtonText;
 
       closeModal(popupNewCard);
     })
     .catch((err) => {
+      addNewCardButton.textContent = "Ошибка добавления";
       console.log('Ошибка', err);
     })
 }
@@ -206,17 +228,25 @@ function editAvatar(evt) {
   evt.preventDefault()
 
   const avatarUrl = avatarImageInput.value.trim();
+  const editAvatarButton = popupEditAvatar.querySelector(".popup__button");
+
+  const originalEditAvatarButtonText = editAvatarButton.textContent;
+
+  editAvatarButton.textContent = "Обновление...";
 
   updateAvatar(avatarUrl)
-    .then((profile) => {
+    .then(() => {
       profileImage.style.backgroundImage = `url(${avatarUrl})`;
 
       formEditAvatar.reset();
       resetInputErrors(formEditAvatar, configData);
 
+      editAvatarButton.textContent = originalEditAvatarButtonText;
+
       closeModal(popupEditAvatar);
     })
     .catch((err) => {
+      editAvatarButton.textContent = "Ошибка обновления аватара";
       console.log('Ошибка обновления аватара', err);
     })
 }

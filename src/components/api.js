@@ -8,7 +8,7 @@ const handleResponse = (res) => {
     }
     
     return res.json();
-  };
+};
 
 // Получение данных профиля
 const getProfile = () => {
