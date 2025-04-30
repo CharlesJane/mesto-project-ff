@@ -24,13 +24,7 @@ function createCard(cardData, handleLikes, createImagePopup, handleDelete) {
     deleteButton.style.opacity = 0;
   }
 
-  const isLiked = cardData.likes.some(function(like) {
-    like._id === "c09a3d58b3afc37c1ef34a79"
-  });
-
-  if (isLiked) {
-    likeButton.classList.add('card__like-button_is-active')
-  }
+  checkIsLiked(cardData, likeButton);
 
   deleteButton.addEventListener("click", function () {
     handleDelete(cardElement.dataset.id);
@@ -46,5 +40,13 @@ function createCard(cardData, handleLikes, createImagePopup, handleDelete) {
 
   return cardElement;
 }
+
+
+function checkIsLiked(cardData, likeButton) {
+  if (cardData.likes.some(like => like._id === "c09a3d58b3afc37c1ef34a79")) {
+    console.log(likeButton.classList);
+    likeButton.classList.add('card__like-button_is-active');
+  }
+};
 
 export { createCard };

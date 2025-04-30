@@ -197,6 +197,7 @@ function createImagePopup(linkValue, nameValue) {
 
 enableValidation(configData);
 
+
 function handleLikes(likeButton, cardElement, cardData) {
   const likeCounterElement = cardElement.querySelector(".card__like-counter");
   const cardId = cardData._id;
