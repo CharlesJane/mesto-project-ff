@@ -1,7 +1,7 @@
 import "./pages/index.css";
 import { initialCards } from "./cards.js";
 import { openModal, closeModal } from "./components/modal.js";
-import { createCard, pressLike } from "./components/card.js";
+import { createCard } from "./components/card.js";
 import { enableValidation, resetInputErrors } from "./components/validation.js";
 import { getProfile, getCards, updateProfile, addCard, deleteCardFromServer, addLike, removeLike } from "./components/api.js";
 
@@ -12,7 +12,6 @@ const placesList = content.querySelector(".places__list");
 
 const formEditProfile = document.querySelector('[name="edit-profile"]');
 const formAddNewPlace = document.querySelector('[name="new-place"]');
-const formDeletePlace = document.querySelector('[name="confirm-delete"]');
 
 const profileEditButton = content.querySelector(".profile__edit-button");
 const profileAddButton = content.querySelector(".profile__add-button");
@@ -47,22 +46,12 @@ const configData = {
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__input-error_active",
 };
-
+  
 // Подстановка данных профиля и отображение карточек
 
-
-  // Создаем массив промисов для одновременной обработки
-
-function loadData() {
-  const promises = [getProfile(), getCards()];
+const promises = [getProfile(), getCards()]; // Создаем массив промисов для одновременной обработки
 
 Promise.all(promises)
-  .then(([userData, cardsArray]) => {
-    return Promise.all([
-      userData.json(),
-      cardsArray.json()
-    ]);
-  })
   .then(([userData, cardData]) => {
     profileTitle.textContent = userData.name;
     profileDescription.textContent = userData.about;
@@ -72,7 +61,7 @@ Promise.all(promises)
       const cardId = card._id;
       const createdCard = createCard(
         card,
-        pressLike,
+        handleLikes,
         createImagePopup,
         handleDelete
       );
@@ -85,9 +74,7 @@ Promise.all(promises)
   .catch((err) => {
     console.log('Ошибка', err);
   });
-}
 
-loadData();
 
 // Добавление анимации для попапов и слушателей на кнопку закрытия и оверлэй
 
@@ -140,8 +127,7 @@ function handleDelete(cardId) {
 
   openModal(popupConfirmDelete);
 
-  confirmButton.addEventListener('click', function(evt) {
-    evt.preventDefault();
+  confirmButton.addEventListener('click', function() {
     confirmDeliteCard(cardId);
     closeModal(popupConfirmDelete);
   });
@@ -151,30 +137,20 @@ function handleDelete(cardId) {
 
 function confirmDeliteCard(cardId) {
   deleteCardFromServer(cardId)
-    .then(res => {
-      // Проверяем статус ответа
-      if (!res.ok) {
-        throw new Error('Ошибка сервера: ' + res.status);
-      }
-      return res.json();
-    })
-    .then(data => {
-      // Проверяем наличие сообщения об успешном удалении
+    .then(data => { // Удаляем карточку из DOM
       if (data.message === 'Пост удалён') {
-        // Удаляем карточку из DOM
         const cardElement = document.querySelector(`.card[data-id="${cardId}"]`);
+
         cardElement.remove();
       } else {
         console.log('Ошибка удаления', data);
       }
     })
-    .then((res) => {
-      console.log(res);
-    })
     .catch((err) => {
       console.log('Ошибка', err);
     })
 }
+
 // Добавление новой карточки
 
 profileAddButton.addEventListener("click", function () {
@@ -185,13 +161,10 @@ function addNewCard(evt) {
   evt.preventDefault()
 
   addCard(newPlaceNameInput.value, newPlaceImageInput.value)
-    .then((res) => {
-      return res.json();
-    })
     .then((data) => {
       const newCreatedCard = createCard(
         data,
-        pressLike,
+        handleLikes,
         createImagePopup,
         handleDelete
       );
@@ -223,3 +196,37 @@ function createImagePopup(linkValue, nameValue) {
 //Вызов валидации
 
 enableValidation(configData);
+
+function handleLikes(likeButton, cardElement, cardData) {
+  const likeCounterElement = cardElement.querySelector(".card__like-counter");
+  const cardId = cardData._id;
+
+  const isLiked = cardData.likes.some(function(like) {
+    return like._id === "c09a3d58b3afc37c1ef34a79";
+  });
+
+  if (isLiked) {
+    removeLike(cardId)
+      .then((card) => {
+        likeButton.classList.remove('card__like-button_is-active');
+        likeCounterElement.textContent = card.likes.length;
+
+        cardData.likes = card.likes;
+      })
+      .catch((err) => {
+        console.log('Ошибка удаления лайка', err);
+      });
+  } else {
+    addLike(cardId)
+      .then((card) => {
+        likeButton.classList.add('card__like-button_is-active');
+        likeCounterElement.textContent = card.likes.length;
+
+        cardData.likes = card.likes;
+      })
+      .catch((err) => {
+        console.log('Ошибка добавления лайка', err);
+      });
+  }
+}
+

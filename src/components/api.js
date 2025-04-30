@@ -1,6 +1,15 @@
 const SERVER_URL = 'https://nomoreparties.co/v1/wff-cohort-37';
 const TOKEN = 'e5986798-633d-43df-97ea-3579551b9329';
 
+const handleResponse = (res) => {
+    if (!res.ok) {
+        console.log("Ошибка", res);
+        return res.json().then(error => Promise.reject(error));
+    }
+    
+    return res.json();
+  };
+
 // Получение данных профиля
 const getProfile = () => {
     return fetch(`${SERVER_URL}/users/me`, {
@@ -8,7 +17,8 @@ const getProfile = () => {
       headers: {
         authorization: TOKEN
       }
-    });
+    })
+    .then(handleResponse);
 };
   
 // Получение карточек
@@ -18,7 +28,8 @@ const getCards = () => {
         headers: {
             authorization: TOKEN
         }
-    });
+    })
+    .then(handleResponse);
 };
 
 // Обновление профиля
@@ -30,7 +41,8 @@ const updateProfile = (name, about) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ name, about })
-    });
+    })
+    .then(handleResponse);
 };
 
 // Добавление новой карточки
@@ -42,7 +54,8 @@ const addCard = (name, link) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ name, link })
-    });
+    })
+    .then(handleResponse);
 };
 
 // Удаление карточки
@@ -52,27 +65,30 @@ const deleteCardFromServer = (cardId) => {
         headers: {
             authorization: TOKEN
         }
-    });
+    })
+    .then(handleResponse);
 };
 
 // Добавление лайка
 const addLike = (cardId) => {
-    return fetch(`${SERVER_URL}/cards/${cardId}/likes`, {
+    return fetch(`${SERVER_URL}/cards/likes/${cardId}`, {
         method: 'PUT',
         headers: {
             authorization: TOKEN
         }
-    });
+    })
+    .then(handleResponse);
 };
 
 // Удаление лайка
 const removeLike = (cardId) => {
-    return fetch(`${SERVER_URL}/cards/${cardId}/likes`, {
+    return fetch(`${SERVER_URL}/cards/likes/${cardId}`, {
         method: 'DELETE',
         headers: {
             authorization: TOKEN
         }
-    });
+    })
+    .then(handleResponse);
 };
 
 export { getProfile, getCards, updateProfile, addCard, deleteCardFromServer, addLike, removeLike };

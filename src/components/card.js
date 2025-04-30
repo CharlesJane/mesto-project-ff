@@ -3,7 +3,7 @@ const cardsTemplate = document.querySelector("#card-template").content;
 
 // Функция создания карточки
 
-function createCard(cardData, pressLike, createImagePopup, handleDelete) {
+function createCard(cardData, handleLikes, createImagePopup, handleDelete) {
   const cardElement = cardsTemplate.querySelector(".card").cloneNode(true);
 
   const cardImage = cardElement.querySelector(".card__image");
@@ -24,12 +24,20 @@ function createCard(cardData, pressLike, createImagePopup, handleDelete) {
     deleteButton.style.opacity = 0;
   }
 
+  const isLiked = cardData.likes.some(function(like) {
+    like._id === "c09a3d58b3afc37c1ef34a79"
+  });
+
+  if (isLiked) {
+    likeButton.classList.add('card__like-button_is-active')
+  }
+
   deleteButton.addEventListener("click", function () {
     handleDelete(cardElement.dataset.id);
   });
 
   likeButton.addEventListener("click", function () {
-    pressLike(likeButton);
+    handleLikes(likeButton, cardElement, cardData);
   });
 
   cardImage.addEventListener("click", function () {
@@ -39,17 +47,4 @@ function createCard(cardData, pressLike, createImagePopup, handleDelete) {
   return cardElement;
 }
 
-// // Функция удаления карточки
-
-// function deleteCard(cardElement) {
-//   cardElement.remove();
-// }
-
-// Ставим и снимаем лайк
-
-function pressLike(likeButton) {
-  likeButton.classList.toggle("card__like-button_is-active");
-}
-
-// Экспорт функций
-export { createCard, pressLike };
+export { createCard };
