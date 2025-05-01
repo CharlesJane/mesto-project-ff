@@ -66,6 +66,7 @@ const configData = {
 // Данные о пользователе
 
 let userId;
+let cardIdForDelete;
 
 // Подстановка данных профиля и отображение карточек
 
@@ -152,12 +153,19 @@ formEditProfile.addEventListener("submit", editProfileForm);
 
 // Открываем попап для подтверждения удаления - функция-обработчик
 
-function handleDelete(cardId) {
-  openModal(popupConfirmDelete);
-
-  popupDeleteButton.addEventListener("click", function () {
-    confirmDeleteCard(cardId);
+if (popupDeleteButton) {
+  popupDeleteButton.addEventListener('click', function() {
+      if (cardIdForDelete) {
+          confirmDeleteCard(cardIdForDelete);
+      }
   });
+} else {
+  console.error('Кнопка подтверждения удаления не найдена');
+}
+
+function handleDelete(cardId) {
+  cardIdForDelete = cardId;
+  openModal(popupConfirmDelete);
 }
 
 // Функция удаления карточки
@@ -177,8 +185,9 @@ function confirmDeleteCard(cardId) {
         if (cardElement) {
           cardElement.remove();
         } else {
-          console.warn(`Элемент с ID ${cardId} не найден на странице`);
+          console.log(`Элемент с ID ${cardId} не найден на странице`);
         }
+
         popupDeleteButton.textContent = originalDeleteButtonText;
         closeModal(popupConfirmDelete);
       } else {
