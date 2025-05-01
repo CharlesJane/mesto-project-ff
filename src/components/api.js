@@ -11,41 +11,51 @@ const handleResponse = (res) => {
   return Promise.reject(`Ошибка: ${res.status}`);
 };
 
+// Универсальная функция проверки ответа
+
+// Разобраться, как вынести в аргументы общие опции
+
+function request(endpoint, options) {
+    const fullUrl = SERVER_URL + '/' + endpoint;
+
+    return fetch(fullUrl, options).then(handleResponse);
+  }
+
 // Получение данных профиля
 const getProfile = () => {
-  return fetch(`${SERVER_URL}/users/me`, {
+  return request(`users/me`, {
     method: "GET",
     headers: {
       authorization: TOKEN,
     },
-  }).then(handleResponse);
+  })
 };
 
 // Получение карточек
 const getCards = () => {
-  return fetch(`${SERVER_URL}/cards`, {
+  return request(`cards`, {
     method: "GET",
     headers: {
       authorization: TOKEN,
     },
-  }).then(handleResponse);
+  })
 };
 
 // Обновление профиля
 const updateProfile = (name, about) => {
-  return fetch(`${SERVER_URL}/users/me`, {
+  return request(`users/me`, {
     method: "PATCH",
     headers: {
       authorization: TOKEN,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ name, about }),
-  }).then(handleResponse);
+  })
 };
 
 // Обновление аватарки
 const updateAvatar = (avatarUrl) => {
-  return fetch(`${SERVER_URL}/users/me/avatar`, {
+  return request(`users/me/avatar`, {
     method: "PATCH",
     headers: {
       authorization: TOKEN,
@@ -54,49 +64,49 @@ const updateAvatar = (avatarUrl) => {
     body: JSON.stringify({
       avatar: avatarUrl,
     }),
-  }).then(handleResponse);
+  })
 };
 
 // Добавление новой карточки
 const addCard = (name, link) => {
-  return fetch(`${SERVER_URL}/cards`, {
+  return request(`cards`, {
     method: "POST",
     headers: {
       authorization: TOKEN,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ name, link }),
-  }).then(handleResponse);
+  })
 };
 
 // Удаление карточки
 const deleteCardFromServer = (cardId) => {
-  return fetch(`${SERVER_URL}/cards/${cardId}`, {
+  return request(`cards/${cardId}`, {
     method: "DELETE",
     headers: {
       authorization: TOKEN,
     },
-  }).then(handleResponse);
+  })
 };
 
 // Добавление лайка
 const addLike = (cardId) => {
-  return fetch(`${SERVER_URL}/cards/likes/${cardId}`, {
+  return request(`cards/likes/${cardId}`, {
     method: "PUT",
     headers: {
       authorization: TOKEN,
     },
-  }).then(handleResponse);
+  })
 };
 
 // Удаление лайка
 const removeLike = (cardId) => {
-  return fetch(`${SERVER_URL}/cards/likes/${cardId}`, {
+  return request(`cards/likes/${cardId}`, {
     method: "DELETE",
     headers: {
       authorization: TOKEN,
     },
-  }).then(handleResponse);
+  })
 };
 
 // Экспортируем все запросы в index.js

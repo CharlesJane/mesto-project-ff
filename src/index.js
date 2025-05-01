@@ -128,22 +128,21 @@ function insertCurrentProfileValues() {
 function editProfileForm(evt) {
   evt.preventDefault();
 
-  const editSubmitButton = formEditProfile.querySelector(".popup__button");
-  const originalEditSubmitText = editSubmitButton.textContent;
+  const originalEditSubmitText = evt.submitter.textContent;
 
-  editSubmitButton.textContent = "Сохранение...";
+  evt.submitter.textContent = "Сохранение...";
 
   updateProfile(nameEditInput.value, jobEditInput.value)
     .then(() => {
       profileTitle.textContent = nameEditInput.value;
       profileDescription.textContent = jobEditInput.value;
 
-      editSubmitButton.textContent = originalEditSubmitText;
+      evt.submitter.textContent = originalEditSubmitText;
 
       closeModal(popupEditProfile);
     })
     .catch((err) => {
-      editSubmitButton.textContent = "Ошибка сохранения";
+      evt.submitter.textContent = "Ошибка сохранения";
       console.log("Ошибка", err);
     });
 }
@@ -197,10 +196,9 @@ profileAddButton.addEventListener("click", function () {
 function addNewCard(evt) {
   evt.preventDefault();
 
-  const addNewCardButton = popupNewCard.querySelector(".popup__button");
-  const originalAddButtonText = addNewCardButton.textContent;
+  const originalAddButtonText = evt.submitter.textContent;
 
-  addNewCardButton.textContent = "Добавление карточки...";
+  evt.submitter.textContent = "Добавление карточки...";
 
   addCard(newPlaceNameInput.value, newPlaceImageInput.value)
     .then((data) => {
@@ -216,12 +214,12 @@ function addNewCard(evt) {
 
       formAddNewPlace.reset();
       resetInputErrors(formAddNewPlace, configData);
-      addNewCardButton.textContent = originalAddButtonText;
+      evt.submitter.textContent = originalAddButtonText;
 
       closeModal(popupNewCard);
     })
     .catch((err) => {
-      addNewCardButton.textContent = "Ошибка добавления";
+      evt.submitter.textContent = "Ошибка добавления";
       console.log("Ошибка", err);
     });
 }
@@ -248,11 +246,10 @@ function editAvatar(evt) {
   evt.preventDefault();
 
   const avatarUrl = avatarImageInput.value.trim(); // Убираем еще пробелы, если при копировании захвачены
-  const editAvatarButton = popupEditAvatar.querySelector(".popup__button");
 
-  const originalEditAvatarButtonText = editAvatarButton.textContent;
+  const originalEditAvatarButtonText = evt.submitter.textContent;
 
-  editAvatarButton.textContent = "Обновление...";
+  evt.submitter.textContent = "Обновление...";
 
   updateAvatar(avatarUrl)
     .then(() => {
@@ -261,12 +258,12 @@ function editAvatar(evt) {
       formEditAvatar.reset();
       resetInputErrors(formEditAvatar, configData);
 
-      editAvatarButton.textContent = originalEditAvatarButtonText;
+      evt.submitter.textContent = originalEditAvatarButtonText;
 
       closeModal(popupEditAvatar);
     })
     .catch((err) => {
-      editAvatarButton.textContent = "Ошибка обновления аватара";
+      evt.submitter.textContent = "Ошибка обновления аватара";
       console.log("Ошибка обновления аватара", err);
     });
 }
