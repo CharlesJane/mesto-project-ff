@@ -174,7 +174,11 @@ function confirmDeleteCard(cardId) {
           `.card[data-id="${cardId}"]`
         );
 
-        cardElement.remove();
+        if (cardElement) {
+          cardElement.remove();
+        } else {
+          console.warn(`Элемент с ID ${cardId} не найден на странице`);
+        }
         popupDeleteButton.textContent = originalDeleteButtonText;
         closeModal(popupConfirmDelete);
       } else {
