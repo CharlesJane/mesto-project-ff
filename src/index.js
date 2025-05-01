@@ -153,16 +153,6 @@ formEditProfile.addEventListener("submit", editProfileForm);
 
 // Открываем попап для подтверждения удаления - функция-обработчик
 
-if (popupDeleteButton) {
-  popupDeleteButton.addEventListener('click', function() {
-      if (cardIdForDelete) {
-          confirmDeleteCard(cardIdForDelete);
-      }
-  });
-} else {
-  console.error('Кнопка подтверждения удаления не найдена');
-}
-
 function handleDelete(cardId) {
   cardIdForDelete = cardId;
   openModal(popupConfirmDelete);
@@ -199,6 +189,14 @@ function confirmDeleteCard(cardId) {
       console.log("Ошибка", err);
     });
 }
+
+// Слушатель кнопки подтверждения удаления
+
+popupDeleteButton.addEventListener('click', function() {
+  if (cardIdForDelete) {
+      confirmDeleteCard(cardIdForDelete);
+  }
+});
 
 // Добавление новой карточки
 
