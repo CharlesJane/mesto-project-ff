@@ -1,13 +1,14 @@
-// работа с формами на разгреб
+// Функция отображения ошибки
 
 function showInputError(someForm, someInput, errorMessage, settings) {
-  // показывает сообщение об ошибке, добавляя нужный класс
   const errorElement = someForm.querySelector(`.${someInput.id}-error`);
 
   someInput.classList.add(settings.inputErrorClass);
   errorElement.textContent = errorMessage;
   errorElement.classList.add(settings.errorClass);
 }
+
+// Функия, которая прячет ошибки
 
 function hideInputError(someForm, someInput, settings) {
   // прячет сообщение об ошибке, удаляя класс
@@ -17,6 +18,8 @@ function hideInputError(someForm, someInput, settings) {
   errorElement.classList.remove(settings.errorClass);
   errorElement.textContent = "";
 }
+
+// Функция валидации полей форм с вызовами показывания/прятания ошибок
 
 function isValid(someForm, someInput, settings) {
   // проверяет состояние валидности по паттерну и по атрибутам
@@ -33,15 +36,17 @@ function isValid(someForm, someInput, settings) {
   }
 }
 
+// Функция проверяет, есть ли в форме хотя бы один невалидный инпут - для отображения состояний кнопки
+
 function hasInvalidInput(inputList) {
-  // проверяет, есть ли в форме хотя бы один невалидный инпут
   return inputList.some((someInput) => {
     return !someInput.validity.valid;
   });
 }
 
+// Функция переключает состояние кнопки при валидации полей
+
 function toggleButtonState(inputList, someButton, settings) {
-  // переключает состоянием кнопки при валидации
   if (hasInvalidInput(inputList)) {
     someButton.disabled = true;
 
@@ -53,9 +58,12 @@ function toggleButtonState(inputList, someButton, settings) {
   }
 }
 
-export function resetInputErrors(someForm, settings) {
-  // очищает ошибки при повторном открытии попапа
-  const inputArray = Array.from(someForm.querySelectorAll(settings.inputSelector));
+// Функция очищает ошибки для повторного открытия попапа
+
+function resetInputErrors(someForm, settings) {
+  const inputArray = Array.from(
+    someForm.querySelectorAll(settings.inputSelector)
+  );
   const submitButton = someForm.querySelector(settings.submitButtonSelector);
 
   inputArray.forEach(function (someInput) {
@@ -64,12 +72,14 @@ export function resetInputErrors(someForm, settings) {
 
   submitButton.disabled = true;
   submitButton.classList.add(settings.inactiveButtonClass);
-};
+}
 
 // Слушатель события input и вызов функции проверки валидности формы
 
 function setEventListeners(someForm, settings) {
-  const inputList = Array.from(someForm.querySelectorAll(settings.inputSelector));
+  const inputList = Array.from(
+    someForm.querySelectorAll(settings.inputSelector)
+  );
   const someButton = someForm.querySelector(settings.submitButtonSelector);
 
   toggleButtonState(inputList, someButton, settings);
@@ -83,7 +93,9 @@ function setEventListeners(someForm, settings) {
   });
 }
 
-export function enableValidation(settings) {
+// Функция, включающая валидацию форм
+
+function enableValidation(settings) {
   const formList = Array.from(document.querySelectorAll(settings.formSelector));
 
   formList.forEach((someForm) => {
@@ -91,3 +103,4 @@ export function enableValidation(settings) {
   });
 }
 
+export { enableValidation, resetInputErrors };
